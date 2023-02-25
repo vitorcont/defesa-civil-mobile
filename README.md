@@ -8,7 +8,6 @@ As telas foram desenhadas em um figma segue o link abaixo para acesso:
 
 https://www.figma.com/file/jQJGv66Ll6BCHYa8QhdmC5/Defesa-Civil?node-id=4%3A329&t=lTTxAa7O7FnLFyeI-1
 
----
 
 ## Autor
 
