@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { LatLng, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Linking, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { LocationObjectCoords } from 'expo-location';
@@ -9,6 +9,7 @@ import {
   Box,
   Button,
   MapBottomModal,
+  MapMarker,
   MapStatusCard,
   PolygonBuilder,
   Row,
@@ -31,14 +32,19 @@ const Map = () => {
     setUserLocation(location);
   };
 
+  const zoomIn = (coord: LatLng) => {
+    mapRef.current &&
+      mapRef.current.animateToRegion({
+        latitude: coord.latitude,
+        longitude: coord.longitude,
+        latitudeDelta: 0.04,
+        longitudeDelta: 0.04,
+      });
+  };
+
   const centerUserLocation = () => {
     if (userLocation && mapRef.current) {
-      mapRef.current.animateToRegion({
-        latitude: userLocation.latitude,
-        longitude: userLocation.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
+      zoomIn(userLocation);
     }
   };
 
@@ -75,8 +81,20 @@ const Map = () => {
     <>
       <Box flex={1}>
         <S.Map ref={mapRef} provider={PROVIDER_GOOGLE}>
+          {!!userLocation && (
+            <MapMarker
+              coordinate={userLocation}
+              backgroundColor={theme.colors.secundary}
+              onPress={() => zoomIn(userLocation)}
+              icon={<MaterialIcons name="location-history" size={30} color={theme.colors.white} />}
+            />
+          )}
           {mapPolygons.map((poly) => (
-            <PolygonBuilder variant={poly.status as any} coordinates={poly.coordinates} />
+            <PolygonBuilder
+              variant={poly.status as any}
+              onPressIcon={(coords) => zoomIn(coords)}
+              coordinates={poly.coordinates}
+            />
           ))}
         </S.Map>
         <Box position="absolute" top="8%" alignSelf="center">

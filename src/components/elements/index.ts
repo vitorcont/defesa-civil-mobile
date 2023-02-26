@@ -6,3 +6,4 @@ export { default as Button } from './Button/Button';
 export { default as StatusCard } from './StatusCard/StatusCard';
 export { default as AnimatedWarning } from './AnimatedWarning/AnimatedWarning';
 export { default as RawBottomModal } from './RawBottomModal/RawBottomModal';
+export { default as MapMarker } from './MapMarker/MapMarker';

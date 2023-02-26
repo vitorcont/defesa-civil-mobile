@@ -1,10 +1,12 @@
-import { Box, Col, StyledText } from '@mobile/components/elements';
+import { Box, Col, MapMarker, StyledText } from '@mobile/components/elements';
 import theme from '@mobile/theme';
 import { StatusCard } from '@mobile/components';
-import { MapPolygon, MapPolygonProps, Marker } from 'react-native-maps';
+import { LatLng, MapPolygon, MapPolygonProps, Marker } from 'react-native-maps';
+import { AntDesign, MaterialIcons, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export interface PolygonBuilderProps extends MapPolygonProps {
   variant: 'safe' | 'attention' | 'danger' | 'evacuate';
+  onPressIcon?: (coord: LatLng) => void;
 }
 
 const PolygonBuilder = (props: PolygonBuilderProps) => {
@@ -25,6 +27,17 @@ const PolygonBuilder = (props: PolygonBuilderProps) => {
       attention: theme.colors.attention,
       danger: theme.colors.danger,
       evacuate: theme.colors.evacuate,
+    };
+
+    return colors[props.variant];
+  };
+
+  const getIcon = () => {
+    const colors = {
+      safe: 'transparent',
+      attention: <AntDesign name="exclamationcircle" size={18} color={theme.colors.white} />,
+      danger: <FontAwesome name="warning" size={18} color={theme.colors.white} />,
+      evacuate: <MaterialCommunityIcons name="run-fast" size={24} color={theme.colors.white} />,
     };
 
     return colors[props.variant];
@@ -54,7 +67,12 @@ const PolygonBuilder = (props: PolygonBuilderProps) => {
             strokeWidth={2}
             fillColor={getFillColor()}
           />
-          <Marker coordinate={getMarkerCoordinates()} />
+          <MapMarker
+            onPress={() => props.onPressIcon && props.onPressIcon(getMarkerCoordinates())}
+            backgroundColor={getStrokeColor()}
+            icon={getIcon()}
+            coordinate={getMarkerCoordinates()}
+          />
         </>
       )}
     </>
