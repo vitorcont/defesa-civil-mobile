@@ -40,6 +40,8 @@ export const Box = styled.View`
     ${(props: IProps) => props.bottom && `bottom: ${props.bottom}`}
     ${(props: IProps) => props.top && `top: ${props.top}`}
   ${(props: IProps) => props.borderRadius && `border-radius: ${props.borderRadius}`}
+  ${(props: IProps) => props.borderWidth && `border-width: ${props.borderWidth}`}
+
 
   ${(props: IProps) => props.shadowBox && `elevation: 5;`}
   ${(props: IProps) => props.shadowBox && `shadow-color: ${theme.colors.black};`}
