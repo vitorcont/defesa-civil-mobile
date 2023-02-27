@@ -2,17 +2,13 @@ import React from 'react';
 import { Modal, TouchableWithoutFeedback } from 'react-native';
 import * as S from './PureModal.styles';
 
-interface IPureModalProps {
+export interface PureModalProps {
   visible: boolean;
   setVisible: (visible: boolean) => void;
   children?: React.ReactNode;
 }
 
-const PureModal: React.FC<IPureModalProps> = ({
-  visible,
-  setVisible,
-  children,
-}) => {
+const PureModal: React.FC<PureModalProps> = ({ visible, setVisible, children }) => {
   return (
     <>
       {visible && <S.Blur />}
@@ -20,8 +16,7 @@ const PureModal: React.FC<IPureModalProps> = ({
         animationType="fade"
         visible={visible}
         transparent
-        onRequestClose={() => setVisible(false)}
-      >
+        onRequestClose={() => setVisible(false)}>
         <TouchableWithoutFeedback onPress={() => setVisible(false)}>
           <S.Overlay>
             <TouchableWithoutFeedback>

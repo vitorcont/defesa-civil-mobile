@@ -10,7 +10,7 @@ const theme = {
     danger: '#FF6B00',
     evacuate: '#FF0000',
     attentionFill: 'rgba(255,193,100,0.19)',
-    dangerFill: 'rgba(255,107,100,0.13)',
+    dangerFill: 'rgba(255,107,100,0.14)',
     evacuateFill: 'rgba(255,0,0,0.28)',
   },
   fonts: {

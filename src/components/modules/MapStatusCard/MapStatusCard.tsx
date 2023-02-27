@@ -1,9 +1,10 @@
 import { Box, Col, StyledText } from '@mobile/components/elements';
 import theme from '@mobile/theme';
 import { StatusCard } from '@mobile/components';
+import { RiskStatusEnum } from '@mobile/enum/status';
 
 export interface MapStatusCardProps {
-  variant: 'safe' | 'attention' | 'danger' | 'evacuate';
+  variant: RiskStatusEnum;
 }
 
 const MapStatusCard = (props: MapStatusCardProps) => {
@@ -15,7 +16,7 @@ const MapStatusCard = (props: MapStatusCardProps) => {
       borderRadius="26px"
       backgroundColor={theme.colors.secundary}
       shadowBox>
-      {(props.variant === 'danger' || props.variant === 'evacuate') && (
+      {(props.variant === RiskStatusEnum.DANGER || props.variant === RiskStatusEnum.EVACUATE) && (
         <Box pdBottom="5px">
           <StyledText fontSize={18} fontFamily={theme.fonts.bold} value="ATENÇÃO" />
         </Box>

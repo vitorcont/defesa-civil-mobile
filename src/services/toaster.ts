@@ -22,13 +22,13 @@ const Toaster = {
     showMessage({
       message,
       description,
-      type: 'danger',
+      type: [RiskStatusEnum.DANGER],
       backgroundColor: 'red',
       color: 'white',
       hideOnPress: true,
       statusBarHeight: Window.heightScale(0.06),
       icon: {
-        icon: 'danger',
+        icon: [RiskStatusEnum.DANGER],
         position: 'left',
         props: {},
       },

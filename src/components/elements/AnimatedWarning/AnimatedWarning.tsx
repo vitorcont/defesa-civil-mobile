@@ -1,10 +1,11 @@
 import { Box, Row, StyledText } from '@mobile/components/elements';
+import { RiskStatusEnum } from '@mobile/enum/status';
 import theme from '@mobile/theme';
 import { useEffect, useRef } from 'react';
 import { Animated } from 'react-native';
 
 interface AnimatedWarningProps {
-  variant: 'safe' | 'attention' | 'danger' | 'evacuate';
+  variant: RiskStatusEnum;
 }
 
 const AnimatedWarning = (props: AnimatedWarningProps) => {
@@ -28,10 +29,10 @@ const AnimatedWarning = (props: AnimatedWarningProps) => {
   };
   const getWarningColor = () => {
     const colors = {
-      safe: theme.colors.safe,
-      attention: theme.colors.attention,
-      danger: theme.colors.danger,
-      evacuate: theme.colors.evacuate,
+      [RiskStatusEnum.SAFE]: theme.colors.safe,
+      [RiskStatusEnum.ATTENTION]: theme.colors.attention,
+      [RiskStatusEnum.DANGER]: theme.colors.danger,
+      [RiskStatusEnum.EVACUATE]: theme.colors.evacuate,
     };
 
     return colors[props.variant];
@@ -43,7 +44,7 @@ const AnimatedWarning = (props: AnimatedWarningProps) => {
 
   return (
     <>
-      {(props.variant === 'evacuate' || props.variant === 'danger') && (
+      {(props.variant === RiskStatusEnum.EVACUATE || props.variant === RiskStatusEnum.DANGER) && (
         <>
           <Animated.View
             style={{

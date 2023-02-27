@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import MapView, { LatLng, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { LatLng, Marker, PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import { Linking, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { LocationObjectCoords } from 'expo-location';
@@ -8,27 +8,51 @@ import {
   AnimatedWarning,
   Box,
   Button,
+  Col,
   MapBottomModal,
   MapMarker,
   MapStatusCard,
   PolygonBuilder,
+  PureModal,
   Row,
+  StatusCard,
+  StyledText,
 } from '@mobile/components';
 import * as S from './styles';
 import theme from '@mobile/theme';
 import { Feather, MaterialIcons, Ionicons } from '@expo/vector-icons';
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import Window from '@mobile/services/dimensions';
-import { MapStatusCardProps } from '@mobile/components/modules/MapStatusCard/MapStatusCard';
-import { getUserLocation } from '@mobile/services/location';
+import {
+  getUserLocation,
+  isPointInside,
+  verifyAreaInsideAreas,
+  verifyPointInsideAreas,
+} from '@mobile/services/location';
+import WarningModal from '@mobile/components/modules/WarningModal/WarningModal';
+import { mapPolygons } from '@mobile/services/polyMocks';
+import { RiskStatusEnum } from '@mobile/enum/status';
 
 const Map = () => {
-  const dispatch = useDispatch();
   const [userLocation, setUserLocation] = useState<LocationObjectCoords | null>(null);
+  const [iconsVisible, setIconsVisible] = useState(false);
+  const [riskStatus, setRiskStatus] = useState<models.PolyArea | null>(null);
   const mapRef = useRef<MapView | null>(null);
+  const [informationModal, setInformationModal] = useState({
+    information: false,
+    index: 0,
+  });
+
+  const handleIconVisibility = (region: Region) => {
+    if (iconsVisible && region.longitudeDelta > 4) {
+      setIconsVisible(false);
+    }
+    if (!iconsVisible && region.longitudeDelta < 4) {
+      setIconsVisible(true);
+    }
+  };
 
   const setDeviceLocation = async () => {
     const location = await getUserLocation();
+    if (location) setRiskStatus(verifyPointInsideAreas(location, mapPolygons));
     setUserLocation(location);
   };
 
@@ -49,38 +73,28 @@ const Map = () => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
+    setDeviceLocation();
+
+    const timeout = setTimeout(() => {
       setDeviceLocation();
-    }, 20000);
-  });
+    }, 10000);
 
-  const status = 'safe';
-
-  const mapPolygons = [
-    {
-      id: 0,
-      status: 'evacuate',
-      coordinates: [
-        {
-          latitude: -23.4759708,
-          longitude: -45.1062933,
-        },
-        {
-          latitude: -23.4885488,
-          longitude: -45.1065394,
-        },
-        {
-          latitude: -23.4976169,
-          longitude: -45.0818597,
-        },
-      ],
-    },
-  ];
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <>
       <Box flex={1}>
-        <S.Map ref={mapRef} provider={PROVIDER_GOOGLE}>
+        <S.Map
+          initialRegion={{
+            latitude: -16.255448,
+            longitude: -47.150932,
+            latitudeDelta: 40,
+            longitudeDelta: 40,
+          }}
+          onRegionChange={handleIconVisibility}
+          ref={mapRef}
+          provider={PROVIDER_GOOGLE}>
           {!!userLocation && (
             <MapMarker
               coordinate={userLocation}
@@ -89,18 +103,30 @@ const Map = () => {
               icon={<MaterialIcons name="location-history" size={30} color={theme.colors.white} />}
             />
           )}
-          {mapPolygons.map((poly) => (
-            <PolygonBuilder
-              variant={poly.status as any}
-              onPressIcon={(coords) => zoomIn(coords)}
-              coordinates={poly.coordinates}
-            />
+          {mapPolygons.map((poly, index) => (
+            <>
+              <PolygonBuilder
+                holes={verifyAreaInsideAreas(poly, mapPolygons)}
+                iconsVisible={iconsVisible}
+                variant={poly.status as any}
+                onPressIcon={(coords) => {
+                  zoomIn(coords);
+                  setTimeout(() => {
+                    setInformationModal({
+                      index,
+                      information: true,
+                    });
+                  }, 600);
+                }}
+                coordinates={poly.coordinates}
+              />
+            </>
           ))}
         </S.Map>
+        <AnimatedWarning variant={riskStatus?.status ?? RiskStatusEnum.SAFE} />
         <Box position="absolute" top="8%" alignSelf="center">
-          <MapStatusCard variant={status} />
+          <MapStatusCard variant={riskStatus?.status ?? RiskStatusEnum.SAFE} />
         </Box>
-        <AnimatedWarning variant={status} />
         <Row
           position="absolute"
           bottom="8%"
@@ -134,6 +160,13 @@ const Map = () => {
           </Box>
         </Row>
       </Box>
+      <WarningModal
+        variant={mapPolygons[informationModal.index].status as any}
+        title={mapPolygons[informationModal.index].title}
+        description={mapPolygons[informationModal.index].description}
+        setVisible={(value) => setInformationModal({ ...informationModal, information: value })}
+        visible={informationModal.information}
+      />
       <MapBottomModal />
     </>
   );

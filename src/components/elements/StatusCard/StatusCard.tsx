@@ -1,17 +1,18 @@
 import { Box, Row, StyledText } from '@mobile/components/elements';
+import { RiskStatusEnum } from '@mobile/enum/status';
 import theme from '@mobile/theme';
 
 interface StatusCardProps {
-  variant: 'safe' | 'attention' | 'danger' | 'evacuate';
+  variant: RiskStatusEnum;
 }
 
 const StatusCard = (props: StatusCardProps) => {
   const getDotColor = () => {
     const colors = {
-      safe: theme.colors.safe,
-      attention: theme.colors.attention,
-      danger: theme.colors.dangerDot,
-      evacuate: theme.colors.black,
+      [RiskStatusEnum.SAFE]: theme.colors.safe,
+      [RiskStatusEnum.ATTENTION]: theme.colors.attention,
+      [RiskStatusEnum.DANGER]: theme.colors.dangerDot,
+      [RiskStatusEnum.EVACUATE]: theme.colors.black,
     };
 
     return colors[props.variant];
@@ -19,10 +20,10 @@ const StatusCard = (props: StatusCardProps) => {
 
   const getBackgroundColor = () => {
     const colors = {
-      safe: theme.colors.secundary,
-      attention: theme.colors.secundary,
-      danger: theme.colors.danger,
-      evacuate: theme.colors.evacuate,
+      [RiskStatusEnum.SAFE]: theme.colors.secundary,
+      [RiskStatusEnum.ATTENTION]: theme.colors.secundary,
+      [RiskStatusEnum.DANGER]: theme.colors.danger,
+      [RiskStatusEnum.EVACUATE]: theme.colors.evacuate,
     };
 
     return colors[props.variant];
@@ -30,10 +31,10 @@ const StatusCard = (props: StatusCardProps) => {
 
   const getLabel = () => {
     const colors = {
-      safe: 'Você está seguro',
-      attention: 'Tenha cuidado',
-      danger: 'Busque abrigo',
-      evacuate: 'Evacue a área',
+      [RiskStatusEnum.SAFE]: 'Você está seguro',
+      [RiskStatusEnum.ATTENTION]: 'Tenha cuidado',
+      [RiskStatusEnum.DANGER]: 'Busque abrigo',
+      [RiskStatusEnum.EVACUATE]: 'Evacue a área',
     };
 
     return colors[props.variant];

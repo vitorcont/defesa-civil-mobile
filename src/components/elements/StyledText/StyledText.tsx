@@ -7,6 +7,7 @@ export interface StyledTextProps {
   color?: string;
   fontSize?: number;
   fontFamily?: string;
+  textAlign?: string;
 }
 
 const StyledText = (props: StyledTextProps) => {

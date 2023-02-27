@@ -35,7 +35,9 @@ const Button = (props: IButtonProps) => {
               {props.StartAdornment}
             </Box>
           )}
-          <Box pdLeft={!!props.StartAdornment ? '26px' : undefined}>
+          <Box
+            pdLeft={!!props.StartAdornment ? '26px' : undefined}
+            pdHorizontal={!props.StartAdornment ? '18px' : undefined}>
             <StyledText value={props.label ?? ''} fontFamily={theme.fonts.semiBold} />
           </Box>
         </S.TouchableTextButton>
